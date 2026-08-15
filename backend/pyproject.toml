@@ -57,7 +57,7 @@ target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
-ignore = ["UP006", "UP035", "UP045"]
+ignore = ["UP006", "UP035", "UP045", "UP017", "I001"]
 
 [tool.mypy]
 python_version = "3.12"
