@@ -7,8 +7,8 @@ GWAS, Fine-Mapping, Colocalization, QTL Context, Rare Variant, Loss-of-Function,
 Gain-of-Function, Direction of Effect, and Perturbation evidence.
 """
 
-from typing import Dict, Any, List, Optional
-from pydantic import BaseModel, Field
+from typing import Optional
+from pydantic import BaseModel
 import enum
 
 class GeneticMaturityState(str, enum.Enum):

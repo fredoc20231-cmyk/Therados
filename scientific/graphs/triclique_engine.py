@@ -7,7 +7,7 @@ Contains:
    and non-adjacency bounded candidate edge inference across D-P, P-E, and D-E edge classes.
 """
 
-from typing import List, Dict, Set, Tuple, Any, Optional
+from typing import List, Dict, Set, Tuple, Any
 import math
 
 class NeighborhoodCompletionBaseline:

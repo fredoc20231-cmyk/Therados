@@ -6,7 +6,6 @@ calculating endotype assignments, cluster stability, and driver pathways.
 """
 
 from typing import List, Dict, Any, Optional
-import numpy as np
 
 class EndotypeEngine:
     def assign_endotype(

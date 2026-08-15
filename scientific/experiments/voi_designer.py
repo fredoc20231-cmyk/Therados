@@ -58,7 +58,6 @@ class ValueOfInformationDesigner:
         alt_assay = top_alt.get("discriminating_assay", "Target-knockout or perturbation rescue assay")
 
         top_po = unresolved_proof_obligations[0] if unresolved_proof_obligations else {}
-        po_prop = top_po.get("proposition", "Driver pathway reversal")
 
         # Use candidate options if provided, or construct structured candidates
         raw_options = assay_candidates or [

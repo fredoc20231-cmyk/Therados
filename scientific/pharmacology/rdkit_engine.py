@@ -12,7 +12,7 @@ logger = logging.getLogger("therados.scientific.pharmacology")
 
 try:
     from rdkit import Chem
-    from rdkit.Chem import Descriptors, Lipinski, rdMolDescriptors
+    from rdkit.Chem import Descriptors, Lipinski
     RDKIT_AVAILABLE = True
 except ImportError:
     RDKIT_AVAILABLE = False
@@ -44,10 +44,14 @@ class RDKitEngine:
 
                 # Lipinski Rule of 5 violations
                 ro5_violations = 0
-                if mw > 500: ro5_violations += 1
-                if clogp > 5: ro5_violations += 1
-                if hbd > 5: ro5_violations += 1
-                if hba > 10: ro5_violations += 1
+                if mw > 500:
+                    ro5_violations += 1
+                if clogp > 5:
+                    ro5_violations += 1
+                if hbd > 5:
+                    ro5_violations += 1
+                if hba > 10:
+                    ro5_violations += 1
 
                 canonical_smiles = Chem.MolToSmiles(mol)
 

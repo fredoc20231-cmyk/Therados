@@ -8,7 +8,7 @@ Handles missing data gracefully and separates candidates into:
 3. fatal_gate_failures
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 class ParetoPortfolioEngine:
     def rank_candidates(
