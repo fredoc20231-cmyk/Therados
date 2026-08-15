@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List
+from typing import List, Dict, Any, cast
 
 from therados.db.session import get_db
-from therados.models.domain_models import TherapeuticHypothesis, ProofObligation, AlternativeMechanism
+from therados.models.domain_models import TherapeuticHypothesis, AlternativeMechanism
 from therados.schemas.domain_schemas import HypothesisRead, HypothesisCreate
 from scientific.hypothesis_compiler.compiler import HypothesisCompiler
 from scientific.falsification.falsification_engine import AdversarialFalsificationEngine
@@ -14,12 +14,13 @@ compiler = HypothesisCompiler()
 falsification_engine = AdversarialFalsificationEngine()
 
 @router.get("", response_model=List[HypothesisRead])
-async def list_hypotheses(db: AsyncSession = Depends(get_db)):
+async def list_hypotheses(db: AsyncSession = Depends(get_db)) -> List[HypothesisRead]:
     res = await db.execute(select(TherapeuticHypothesis))
-    return res.scalars().all()
+    hypos = res.scalars().all()
+    return [HypothesisRead.model_validate(h) for h in hypos]
 
 @router.post("", response_model=HypothesisRead)
-async def create_hypothesis(hypo_in: HypothesisCreate, db: AsyncSession = Depends(get_db)):
+async def create_hypothesis(hypo_in: HypothesisCreate, db: AsyncSession = Depends(get_db)) -> HypothesisRead:
     hypo = TherapeuticHypothesis(
         program_id=hypo_in.program_id,
         title=hypo_in.title,
@@ -37,10 +38,10 @@ async def create_hypothesis(hypo_in: HypothesisCreate, db: AsyncSession = Depend
     db.add(hypo)
     await db.commit()
     await db.refresh(hypo)
-    return hypo
+    return HypothesisRead.model_validate(hypo)
 
 @router.post("/{hypothesis_id}/compile")
-async def compile_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_db)):
+async def compile_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
     res = await db.execute(select(TherapeuticHypothesis).where(TherapeuticHypothesis.id == hypothesis_id))
     hypo = res.scalar_one_or_none()
     if not hypo:
@@ -51,18 +52,18 @@ async def compile_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_
         intervention=hypo.intervention_name,
         target=hypo.intended_target,
         action=hypo.intended_action,
-        context=hypo.cellular_context,
-        endotype=hypo.disease_endotype,
-        genomic_bg=hypo.genomic_background or "Standard",
-        biomarkers=hypo.predictive_biomarkers
+        cellular_context=hypo.cellular_context,
+        disease_endotype=hypo.disease_endotype,
+        genomic_background=hypo.genomic_background,
+        predictive_biomarkers=hypo.predictive_biomarkers
     )
 
     hypo.status = "compiled"
     await db.commit()
-    return dossier
+    return cast(Dict[str, Any], dossier.model_dump())
 
 @router.post("/{hypothesis_id}/falsify")
-async def falsify_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_db)):
+async def falsify_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
     res = await db.execute(select(TherapeuticHypothesis).where(TherapeuticHypothesis.id == hypothesis_id))
     hypo = res.scalar_one_or_none()
     if not hypo:
@@ -70,11 +71,19 @@ async def falsify_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_
 
     alts_res = await db.execute(select(AlternativeMechanism).where(AlternativeMechanism.hypothesis_id == hypothesis_id))
     alts = alts_res.scalars().all()
-    alts_data = [{"mechanism_name": a.mechanism_name, "description": a.description, "evidence_support": a.evidence_support, "discriminating_assay": a.discriminating_assay} for a in alts]
+    alts_data = [
+        {
+            "mechanism_name": a.mechanism_name,
+            "description": a.description,
+            "evidence_support": a.evidence_support,
+            "discriminating_assay": a.discriminating_assay
+        }
+        for a in alts
+    ]
 
     dossier = falsification_engine.generate_falsification_dossier(
+        hypothesis_id=hypo.id,
         hypothesis_title=hypo.title,
-        hypothesis_support_score=hypo.support_score,
         alternative_mechanisms=alts_data
     )
-    return dossier
+    return cast(Dict[str, Any], dossier.model_dump())

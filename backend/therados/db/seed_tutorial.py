@@ -1,6 +1,5 @@
 import asyncio
 import hashlib
-from datetime import datetime, timezone
 from passlib.context import CryptContext
 from sqlalchemy.future import select
 
@@ -8,8 +7,7 @@ from therados.db.session import AsyncSessionLocal, engine, Base
 from therados.models.domain_models import (
     Organization, User, Membership, UserRole, Project, TherapeuticProgram,
     BiologicalEntity, EntityAlias, EntityIdentifier, EvidenceSource, EvidenceRecord,
-    EvidenceClaim, EvidenceMaturity, TherapeuticHypothesis, HypothesisVersion,
-    ProofObligation, AlternativeMechanism, CandidateIntervention, PharmacologyAssessment,
+    EvidenceClaim, EvidenceMaturity, TherapeuticHypothesis, ProofObligation, AlternativeMechanism, CandidateIntervention, PharmacologyAssessment,
     SafetyAssessment, ExperimentPlan, ExperimentRun, Decision, DecisionOutcome,
     DigitalTwinSnapshot, ModelProvider
 )

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from therados.models.domain_models import UserRole, EvidenceMaturity, DecisionOutcome
+from therados.models.domain_models import EvidenceMaturity, DecisionOutcome
 
 class OrganizationBase(BaseModel):
     name: str

@@ -2,22 +2,22 @@
 
 | Subsystem / Capability | Status | Real Implementation | External Provider Required | Tests |
 | :--- | :--- | :--- | :--- | :--- |
-| **Monorepo & Infra** | COMPLETE | Makefile, Docker Compose, CI workflows | Docker | PASS (16 tests) |
-| **Domain Models & DB** | COMPLETE | PostgreSQL (pgvector), Async SQLAlchemy, Alembic | Postgres | PASS |
-| **Evidence & Provenance** | COMPLETE | Immutable records, SHA-256 checksums, Lineage | None | PASS |
-| **Entity Resolution** | COMPLETE | Normalization across HGNC, UniProt, ChEMBL | None | PASS |
-| **Triclique Augmentation** | COMPLETE | Exact triclique enumeration, candidate edge scoring | None | PASS |
-| **Evidence Independence** | COMPLETE | Lineage duplicate penalty $S = \sum q_k \cdot i_k \cdot r_k$ | None | PASS |
-| **Causal Hypergraph** | COMPLETE | Directional sign, cell context, mechanistic events | Neo4j | PASS |
-| **Human Causal Genetics** | COMPLETE | GWAS/QTL colocalization framework | Public data | PASS |
-| **Endotype Analysis** | COMPLETE | Clustering, pathway scoring, stability | None | PASS |
-| **Causal Phenotype Inversion** | COMPLETE | Driver reversal - Harm induction ($CPI$) | None | PASS |
-| **Pharmacology & RDKit** | COMPLETE | Small molecule SMILES, descriptors, AutoDock adapter | Local RDKit / Vina | PASS |
-| **Hard Feasibility Gates** | COMPLETE | Exposure, safety, context direction gates | None | PASS |
-| **Hypothesis Compiler** | COMPLETE | Proof obligations, dossiers, evidence gaps | None | PASS |
-| **Adversarial Falsification**| COMPLETE | Competing mechanisms, falsification dossiers | None | PASS |
-| **Pareto Portfolio Engine** | COMPLETE | Multi-objective non-dominated sorting | None | PASS |
-| **Inverse Experiment Designer**| COMPLETE | Value of Information (VOI) experiment rank | None | PASS |
-| **Program Digital Twin** | COMPLETE | Append-only historical timeline & updates | None | PASS |
-| **Model Fabric & Copilot** | COMPLETE | Provider-neutral registry, grounded citations | OpenAI / Anthropic optional | PASS |
-| **Next.js Web Workspace** | COMPLETE | Therapeutic Program Workspace, Cytoscape, Plotly, 3Dmol | Node.js | PASS (build clean) |
+| **Monorepo & CI/CD** | COMPLETE | Makefile, Docker Compose, GitHub Actions CI workflow | Docker / Node 20 / Python 3.12 | PASS (Green CI) |
+| **Domain Models & DB** | FUNCTIONAL_BASELINE | PostgreSQL (pgvector), Async SQLAlchemy 2.x, Alembic migrations | PostgreSQL | PASS (32 tests) |
+| **Evidence & Provenance** | FUNCTIONAL_BASELINE | Immutable records, SHA-256 checksums, synthetic tutorial guardrails | None | PASS |
+| **Entity Resolution** | FUNCTIONAL_BASELINE | Mapping identifiers across HGNC, UniProt, ChEMBL, PubChem | None | PASS |
+| **Maximal Triclique Augmentation** | FUNCTIONAL_BASELINE | Exact 3-partite maximal triclique enumeration & candidate edge inference | None | PASS (Invariants pass) |
+| **Evidence Independence** | FUNCTIONAL_BASELINE | Citation duplication penalty $S = \sum q_k \cdot i_k \cdot r_k$ & asymptotic support curve | None | PASS |
+| **Causal Hypergraph** | FUNCTIONAL_BASELINE | Directional signed claims & Neo4j graph driver adapter | Neo4j | PASS |
+| **Human Causal Genetics** | FUNCTIONAL_BASELINE | Structured CausalGeneticsDossier & conservative maturity states | Public GWAS / QTL | PASS |
+| **Endotype Analysis** | FUNCTIONAL_BASELINE | Endotype definitions, prevalence, pathway drivers, and stability tracking | Omics Matrix Provider | PASS |
+| **Causal Phenotype Inversion** | FUNCTIONAL_BASELINE | Driver reversal minus harm induction ($CPI = \sum w_i r_i - \sum w_j h_j$) | None | PASS |
+| **Pharmacology & RDKit** | FUNCTIONAL_BASELINE | Local RDKit SMILES descriptors, Lipinski Rule of 5, AutoDock Vina Adapter | AutoDock Vina executable | PASS |
+| **Hard Feasibility Gates** | FUNCTIONAL_BASELINE | Exposure, toxicity, and direction gates with conservative missing-data semantics | None | PASS (Invariants pass) |
+| **Hypothesis Compiler** | FUNCTIONAL_BASELINE | Typed proof obligations, evidence requirements, rule provenance | None | PASS (Invariants pass) |
+| **Adversarial Falsification** | FUNCTIONAL_BASELINE | Competing mechanisms, qualitative support states, evidence priority selection | None | PASS (Invariants pass) |
+| **Pareto Portfolio Engine** | FUNCTIONAL_BASELINE | Multi-objective non-dominated sorting separating feasible vs incomplete vs fatal gate failures | None | PASS |
+| **Inverse Experiment Designer** | FUNCTIONAL_BASELINE | Decision-information framework & exact VOI when quantitative inputs exist | None | PASS |
+| **Program Digital Twin** | FUNCTIONAL_BASELINE | Append-only historical state timeline & snapshot updates | None | PASS |
+| **Model Fabric & Copilot** | FUNCTIONAL_BASELINE | Provider-neutral registry & grounded copilot citing EvidenceRecord IDs | OpenAI / Anthropic optional | PASS |
+| **Next.js Web Workspace** | FUNCTIONAL_BASELINE | Therapeutic Program Workspace, Cytoscape, Plotly, 3Dmol UI | Node.js | PASS (Build clean) |

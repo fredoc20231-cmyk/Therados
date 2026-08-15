@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List, Dict, Any
+from typing import List, Dict, Any, cast
 import hashlib
 
 from therados.db.session import get_db
@@ -13,13 +13,31 @@ router = APIRouter(prefix="/evidence", tags=["Evidence & Provenance"])
 independence_engine = EvidenceIndependenceEngine()
 
 @router.get("", response_model=List[EvidenceRecordRead])
-async def list_evidence(db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(EvidenceRecord).order_by(EvidenceRecord.retrieval_timestamp.desc()))
-    return res.scalars().all()
+async def list_evidence(
+    include_synthetic: bool = Query(default=False, description="Set to True to include tutorial synthetic evidence"),
+    db: AsyncSession = Depends(get_db)
+) -> List[EvidenceRecordRead]:
+    query = select(EvidenceRecord)
+    if not include_synthetic:
+        query = query.where(EvidenceRecord.is_synthetic.is_(False))
+    query = query.order_by(EvidenceRecord.retrieval_timestamp.desc())
+
+    res = await db.execute(query)
+    records = res.scalars().all()
+    return [EvidenceRecordRead.model_validate(r) for r in records]
 
 @router.post("/ingest", response_model=EvidenceRecordRead)
-async def ingest_evidence(record_in: EvidenceRecordCreate, db: AsyncSession = Depends(get_db)):
-    # Find or create source
+async def ingest_evidence(
+    record_in: EvidenceRecordCreate,
+    is_tutorial_project: bool = Query(default=False, description="Set to True only if ingesting into a synthetic tutorial project"),
+    db: AsyncSession = Depends(get_db)
+) -> EvidenceRecordRead:
+    if record_in.is_synthetic and not is_tutorial_project:
+        raise HTTPException(
+            status_code=400,
+            detail="Synthetic tutorial evidence cannot be ingested into a non-tutorial production project."
+        )
+
     res = await db.execute(select(EvidenceSource).where(EvidenceSource.name == record_in.source_name))
     source = res.scalar_one_or_none()
     if not source:
@@ -43,10 +61,10 @@ async def ingest_evidence(record_in: EvidenceRecordCreate, db: AsyncSession = De
     db.add(record)
     await db.commit()
     await db.refresh(record)
-    return record
+    return EvidenceRecordRead.model_validate(record)
 
 @router.get("/independence-score")
-async def evaluate_independence(db: AsyncSession = Depends(get_db)):
+async def evaluate_independence(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
     res = await db.execute(select(EvidenceClaim))
     claims = res.scalars().all()
     claims_data = [
@@ -60,4 +78,4 @@ async def evaluate_independence(db: AsyncSession = Depends(get_db)):
         }
         for c in claims
     ]
-    return independence_engine.compute_independent_support(claims_data)
+    return cast(Dict[str, Any], independence_engine.compute_independent_support(claims_data))

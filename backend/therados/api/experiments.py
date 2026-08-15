@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List
+from typing import List, Dict, Any, cast
 
 from therados.db.session import get_db
 from therados.models.domain_models import ExperimentPlan, ProofObligation, AlternativeMechanism
@@ -12,16 +12,17 @@ router = APIRouter(prefix="/experiments", tags=["Inverse Experiment Designer"])
 voi_designer = ValueOfInformationDesigner()
 
 @router.get("", response_model=List[ExperimentPlanRead])
-async def list_experiment_plans(db: AsyncSession = Depends(get_db)):
+async def list_experiment_plans(db: AsyncSession = Depends(get_db)) -> List[ExperimentPlanRead]:
     res = await db.execute(select(ExperimentPlan))
-    return res.scalars().all()
+    plans = res.scalars().all()
+    return [ExperimentPlanRead.model_validate(p) for p in plans]
 
 @router.post("/recommend/{hypothesis_id}")
-async def recommend_experiment(hypothesis_id: str, db: AsyncSession = Depends(get_db)):
+async def recommend_experiment(hypothesis_id: str, db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
     pos_res = await db.execute(select(ProofObligation).where(ProofObligation.hypothesis_id == hypothesis_id))
     pos = [{"id": p.id, "proposition": p.proposition, "state": p.state} for p in pos_res.scalars().all()]
 
     alts_res = await db.execute(select(AlternativeMechanism).where(AlternativeMechanism.hypothesis_id == hypothesis_id))
     alts = [{"mechanism_name": a.mechanism_name, "evidence_support": a.evidence_support} for a in alts_res.scalars().all()]
 
-    return voi_designer.recommend_experiment(hypothesis_id, pos, alts)
+    return cast(Dict[str, Any], voi_designer.recommend_experiment(hypothesis_id, pos, alts))

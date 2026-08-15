@@ -1,19 +1,11 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-
-from therados.db.session import get_db
-from therados.models.domain_models import ModelProvider
+from fastapi import APIRouter
+from typing import List, Dict, Any
 from therados.config.settings import settings
 
 router = APIRouter(prefix="/models", tags=["Model Registry & Providers"])
 
 @router.get("")
-async def get_model_providers(db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(ModelProvider))
-    providers = res.scalars().all()
-
-    # Dynamic status
+async def get_model_providers() -> List[Dict[str, Any]]:
     provider_status = [
         {
             "provider_name": "OpenAI LLM",

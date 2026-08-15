@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 from fastapi.testclient import TestClient
 from therados.main import app

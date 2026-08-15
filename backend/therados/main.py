@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Dict
 import logging
 
+from therados.config.settings import settings
 from therados.api.health import router as health_router
 from therados.api.auth import router as auth_router
 from therados.api.projects import router as projects_router
@@ -32,7 +34,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -61,7 +63,7 @@ app.include_router(integrations_router, prefix=v1_prefix)
 app.include_router(audit_router, prefix=v1_prefix)
 
 @app.get("/")
-async def root():
+async def root() -> Dict[str, str]:
     return {
         "message": "Welcome to TheraDOS — Therapeutic Domain Operating System",
         "docs": "/docs",

@@ -1,11 +1,14 @@
 """
 Multi-Objective Pareto Portfolio Engine.
 
-Ranks candidates using non-dominated sorting across distinct scientific dimensions:
-CPI score, Safety score, Exposure feasibility, Novelty, and VOI.
+Ranks candidate interventions using non-dominated sorting across distinct scientific dimensions.
+Handles missing data gracefully and separates candidates into:
+1. feasible_frontier
+2. incomplete_evidence
+3. fatal_gate_failures
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 class ParetoPortfolioEngine:
     def rank_candidates(
@@ -17,31 +20,45 @@ class ParetoPortfolioEngine:
         Do NOT compress everything into one opaque single score!
         """
         if not candidates:
-            return {"pareto_frontier": [], "dominated_candidates": []}
+            return {
+                "feasible_frontier": [],
+                "incomplete_evidence": [],
+                "fatal_gate_failures": [],
+                "total_candidates_evaluated": 0
+            }
 
-        # Ensure all candidates have numeric metrics for comparison
-        processed = []
+        feasible_candidates = []
+        incomplete_candidates = []
+        fatal_gate_failures = []
+
         for c in candidates:
             c_copy = dict(c)
-            # Hard gate check
-            if not c_copy.get("safety_gate_passed", True):
-                c_copy["pareto_rank"] = "REJECTED_FATAL_GATE"
-                c_copy["is_frontier"] = False
-                processed.append(c_copy)
+            gate_status = c_copy.get("gate_status", "UNRESOLVED")
+
+            # Check fatal gate failures
+            if gate_status == "REJECTED_BY_FATAL_GATE" or c_copy.get("safety_gate_passed") is False:
+                c_copy["pareto_category"] = "FATAL_GATE_FAILURE"
+                fatal_gate_failures.append(c_copy)
                 continue
 
-            c_copy["cpi_metric"] = float(c_copy.get("cpi_score", 0.5))
-            c_copy["novelty_metric"] = float(c_copy.get("novelty_score", 0.5))
+            # Check if required metrics are present
+            cpi = c_copy.get("cpi_score")
+            novelty = c_copy.get("novelty_score")
+
+            if cpi is None or novelty is None or gate_status == "UNRESOLVED_EVIDENCE_REQUIRED":
+                c_copy["pareto_category"] = "INCOMPLETE_EVIDENCE"
+                incomplete_candidates.append(c_copy)
+                continue
+
+            c_copy["cpi_metric"] = float(cpi)
+            c_copy["novelty_metric"] = float(novelty)
             c_copy["is_frontier"] = True
-            processed.append(c_copy)
+            feasible_candidates.append(c_copy)
 
-        valid_candidates = [c for c in processed if c.get("pareto_rank") != "REJECTED_FATAL_GATE"]
-
-        # Non-dominated sorting
-        for i, c1 in enumerate(valid_candidates):
-            for j, c2 in enumerate(valid_candidates):
+        # Non-dominated sorting on feasible candidates
+        for i, c1 in enumerate(feasible_candidates):
+            for j, c2 in enumerate(feasible_candidates):
                 if i != j and c1["is_frontier"]:
-                    # c2 dominates c1 if c2 is strictly better in all metrics
                     c2_better_cpi = c2["cpi_metric"] >= c1["cpi_metric"]
                     c2_better_nov = c2["novelty_metric"] >= c1["novelty_metric"]
                     c2_strictly_better = (c2["cpi_metric"] > c1["cpi_metric"]) or (c2["novelty_metric"] > c1["novelty_metric"])
@@ -50,22 +67,24 @@ class ParetoPortfolioEngine:
                         c1["is_frontier"] = False
                         break
 
-        pareto_frontier = []
-        dominated = []
+        feasible_frontier = []
+        dominated_candidates = []
 
-        for c in processed:
-            if c.get("pareto_rank") == "REJECTED_FATAL_GATE":
-                dominated.append(c)
-            elif c.get("is_frontier"):
+        for c in feasible_candidates:
+            if c.get("is_frontier"):
                 c["pareto_rank"] = "TIER_A_PARETO_FRONTIER"
-                pareto_frontier.append(c)
+                c["pareto_category"] = "FEASIBLE_FRONTIER"
+                feasible_frontier.append(c)
             else:
                 c["pareto_rank"] = "TIER_B_DOMINATED"
-                dominated.append(c)
+                c["pareto_category"] = "FEASIBLE_DOMINATED"
+                dominated_candidates.append(c)
 
         return {
             "total_candidates_evaluated": len(candidates),
-            "pareto_frontier_count": len(pareto_frontier),
-            "pareto_frontier": pareto_frontier,
-            "dominated_candidates": dominated
+            "feasible_frontier_count": len(feasible_frontier),
+            "feasible_frontier": feasible_frontier,
+            "dominated_candidates": dominated_candidates,
+            "incomplete_evidence": incomplete_candidates,
+            "fatal_gate_failures": fatal_gate_failures
         }

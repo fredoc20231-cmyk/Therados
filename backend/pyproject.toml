@@ -40,9 +40,12 @@ dev = [
     "mypy>=1.8.0",
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["therados*"]
+[tool.setuptools]
+packages = [
+    "therados", "therados.api", "therados.config", "therados.db", "therados.models", "therados.schemas",
+    "scientific", "scientific.digital_twin", "scientific.endotypes", "scientific.evidence", "scientific.experiments", "scientific.falsification", "scientific.genetics", "scientific.graphs", "scientific.hypothesis_compiler", "scientific.pharmacology", "scientific.phenotype_inversion", "scientific.portfolio",
+    "integrations", "integrations.model_providers", "integrations.molecular_tools", "integrations.public_data"
+]
 
 [tool.setuptools.package-dir]
 "therados" = "therados"
@@ -60,3 +63,4 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = [".", ".."]

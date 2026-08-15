@@ -1,11 +1,14 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional, List
 
 class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     SECRET_KEY: str = "dev_jwt_secret_key_change_in_production_32bytes"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+
+    # CORS
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     # Database URLs
     DATABASE_URL: str = "postgresql+asyncpg://therados:therados_dev_password@localhost:5432/therados_db"
@@ -30,6 +33,9 @@ class Settings(BaseSettings):
 
     # Tools
     AUTODOCK_VINA_PATH: Optional[str] = None
+
+    def get_allowed_origins(self) -> List[str]:
+        return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
 
     class Config:
         env_file = ".env"

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from typing import Dict, Any, cast
 
 from therados.db.session import get_db
 from therados.models.domain_models import CandidateIntervention, SafetyAssessment
@@ -10,7 +11,7 @@ router = APIRouter(prefix="/portfolio", tags=["Pareto Portfolio Engine"])
 pareto_engine = ParetoPortfolioEngine()
 
 @router.get("/pareto-ranking")
-async def get_pareto_ranking(db: AsyncSession = Depends(get_db)):
+async def get_pareto_ranking(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
     res = await db.execute(select(CandidateIntervention))
     candidates = res.scalars().all()
 
@@ -29,4 +30,4 @@ async def get_pareto_ranking(db: AsyncSession = Depends(get_db)):
             "safety_gate_passed": safety.safety_gate_passed if safety else True
         })
 
-    return pareto_engine.rank_candidates(cand_data)
+    return cast(Dict[str, Any], pareto_engine.rank_candidates(cand_data))

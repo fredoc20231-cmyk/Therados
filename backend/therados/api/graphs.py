@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import Dict, Any
+from typing import Dict, Any, cast
 
 from therados.db.session import get_db
 from therados.models.domain_models import EvidenceClaim, BiologicalEntity
-from scientific.graphs.triclique_engine import TricliqueEngine
+from scientific.graphs.triclique_engine import NeighborhoodCompletionBaseline, MaximalTricliqueAugmentationEngine
 
 router = APIRouter(prefix="/graphs", tags=["Multipartite & Causal Graph"])
-triclique_engine = TricliqueEngine()
+baseline_engine = NeighborhoodCompletionBaseline()
+maximal_engine = MaximalTricliqueAugmentationEngine()
 
 @router.get("")
-async def get_multipartite_graph(db: AsyncSession = Depends(get_db)):
-    # Build graph nodes and edges from database
+async def get_multipartite_graph(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
     entities_res = await db.execute(select(BiologicalEntity))
     entities = entities_res.scalars().all()
 
@@ -32,15 +32,18 @@ async def get_multipartite_graph(db: AsyncSession = Depends(get_db)):
     return {"nodes": nodes, "edges": edges}
 
 @router.post("/triclique")
-async def run_triclique_inference():
-    # Run exact triclique candidate inference
+async def run_triclique_inference(mode: str = "maximal") -> Dict[str, Any]:
     drugs = ["RP-6306", "Dinaciclib", "Adavosertib"]
-    targets = ["PKMYT1", "CDK2", "WEE1"]
+    proteins = ["PKMYT1", "CDK2", "WEE1"]
     diseases = ["Platinum-Resistant HGSOC", "CCNE1-Amp Ovarian"]
 
-    dt_edges = [("RP-6306", "PKMYT1"), ("Dinaciclib", "CDK2")]
-    td_edges = [("PKMYT1", "Platinum-Resistant HGSOC"), ("CDK2", "Platinum-Resistant HGSOC")]
-    dd_edges = [("RP-6306", "Platinum-Resistant HGSOC")]
+    dp_edges = [("RP-6306", "PKMYT1"), ("Dinaciclib", "CDK2")]
+    pe_edges = [("PKMYT1", "Platinum-Resistant HGSOC"), ("CDK2", "Platinum-Resistant HGSOC")]
+    de_edges = [("RP-6306", "Platinum-Resistant HGSOC")]
 
-    candidates = triclique_engine.find_candidate_edges(drugs, targets, diseases, dt_edges, td_edges, dd_edges)
-    return {"candidates": candidates}
+    if mode == "baseline":
+        candidates = baseline_engine.find_candidate_edges(drugs, proteins, diseases, dp_edges, pe_edges, de_edges)
+        return {"mode": "baseline", "candidates": candidates}
+
+    res = maximal_engine.predict_candidate_edges(drugs, proteins, diseases, dp_edges, pe_edges, de_edges)
+    return cast(Dict[str, Any], res)

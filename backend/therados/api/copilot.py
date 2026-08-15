@@ -11,7 +11,7 @@ router = APIRouter(prefix="/copilot", tags=["AI Copilot Workspace"])
 copilot_engine = CopilotEngine()
 
 @router.post("/query", response_model=CopilotQueryResponse)
-async def query_copilot(req: CopilotQueryRequest, db: AsyncSession = Depends(get_db)):
+async def query_copilot(req: CopilotQueryRequest, db: AsyncSession = Depends(get_db)) -> CopilotQueryResponse:
     prog_res = await db.execute(select(TherapeuticProgram).where(TherapeuticProgram.id == req.program_id))
     prog = prog_res.scalar_one_or_none()
     disease_name = prog.disease if prog else "Therapeutic Program"

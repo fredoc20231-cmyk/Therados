@@ -4,25 +4,24 @@ from sqlalchemy.future import select
 from typing import List
 
 from therados.db.session import get_db
-from therados.models.domain_models import Decision, TherapeuticHypothesis, DigitalTwinSnapshot, TherapeuticProgram
+from therados.models.domain_models import Decision, TherapeuticHypothesis, DigitalTwinSnapshot, User
 from therados.schemas.domain_schemas import DecisionRead, DecisionCreate
-from therados.api.auth import get_current_user, User
-from scientific.digital_twin.digital_twin_engine import DigitalTwinEngine
+from therados.api.auth import get_current_user
 
 router = APIRouter(prefix="/decisions", tags=["Decisions & Governance"])
-twin_engine = DigitalTwinEngine()
 
 @router.get("", response_model=List[DecisionRead])
-async def list_decisions(db: AsyncSession = Depends(get_db)):
+async def list_decisions(db: AsyncSession = Depends(get_db)) -> List[DecisionRead]:
     res = await db.execute(select(Decision).order_by(Decision.created_at.desc()))
-    return res.scalars().all()
+    decisions = res.scalars().all()
+    return [DecisionRead.model_validate(d) for d in decisions]
 
 @router.post("", response_model=DecisionRead)
 async def record_decision(
     dec_in: DecisionCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
-):
+) -> DecisionRead:
     res = await db.execute(select(TherapeuticHypothesis).where(TherapeuticHypothesis.id == dec_in.hypothesis_id))
     hypo = res.scalar_one_or_none()
     if not hypo:
@@ -36,10 +35,8 @@ async def record_decision(
     )
     db.add(decision)
 
-    # Update hypothesis status
     hypo.status = dec_in.outcome.value.lower()
 
-    # Append Digital Twin Snapshot
     twins_res = await db.execute(
         select(DigitalTwinSnapshot)
         .where(DigitalTwinSnapshot.program_id == hypo.program_id)
@@ -63,4 +60,4 @@ async def record_decision(
 
     await db.commit()
     await db.refresh(decision)
-    return decision
+    return DecisionRead.model_validate(decision)

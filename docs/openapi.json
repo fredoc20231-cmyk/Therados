@@ -1,0 +1,2521 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TheraDOS \u2014 Therapeutic Domain Operating System",
+    "description": "Provenance-aware therapeutic intelligence operating system converting heterogeneous evidence into falsifiable, safety-constrained hypotheses.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Check Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Readiness Check",
+        "operationId": "readiness_check_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Readiness Check Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_login_api_v1_auth_login_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "List Projects",
+        "operationId": "list_projects_api_v1_projects_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Projects Api V1 Projects Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Create Project",
+        "operationId": "create_project_api_v1_projects_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get Project",
+        "operationId": "get_project_api_v1_projects__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/programs": {
+      "get": {
+        "tags": [
+          "Therapeutic Programs"
+        ],
+        "summary": "List Programs",
+        "operationId": "list_programs_api_v1_programs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProgramRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Programs Api V1 Programs Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Therapeutic Programs"
+        ],
+        "summary": "Create Program",
+        "operationId": "create_program_api_v1_programs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/programs/{program_id}": {
+      "get": {
+        "tags": [
+          "Therapeutic Programs"
+        ],
+        "summary": "Get Program",
+        "operationId": "get_program_api_v1_programs__program_id__get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Program Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/programs/{program_id}/digital-twin": {
+      "get": {
+        "tags": [
+          "Therapeutic Programs"
+        ],
+        "summary": "Get Digital Twin Timeline",
+        "operationId": "get_digital_twin_timeline_api_v1_programs__program_id__digital_twin_get",
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Program Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DigitalTwinSnapshotRead"
+                  },
+                  "title": "Response Get Digital Twin Timeline Api V1 Programs  Program Id  Digital Twin Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/evidence": {
+      "get": {
+        "tags": [
+          "Evidence & Provenance"
+        ],
+        "summary": "List Evidence",
+        "operationId": "list_evidence_api_v1_evidence_get",
+        "parameters": [
+          {
+            "name": "include_synthetic",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Set to True to include tutorial synthetic evidence",
+              "default": false,
+              "title": "Include Synthetic"
+            },
+            "description": "Set to True to include tutorial synthetic evidence"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EvidenceRecordRead"
+                  },
+                  "title": "Response List Evidence Api V1 Evidence Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/evidence/ingest": {
+      "post": {
+        "tags": [
+          "Evidence & Provenance"
+        ],
+        "summary": "Ingest Evidence",
+        "operationId": "ingest_evidence_api_v1_evidence_ingest_post",
+        "parameters": [
+          {
+            "name": "is_tutorial_project",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Set to True only if ingesting into a synthetic tutorial project",
+              "default": false,
+              "title": "Is Tutorial Project"
+            },
+            "description": "Set to True only if ingesting into a synthetic tutorial project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceRecordCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceRecordRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/evidence/independence-score": {
+      "get": {
+        "tags": [
+          "Evidence & Provenance"
+        ],
+        "summary": "Evaluate Independence",
+        "operationId": "evaluate_independence_api_v1_evidence_independence_score_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Evaluate Independence Api V1 Evidence Independence Score Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/graphs": {
+      "get": {
+        "tags": [
+          "Multipartite & Causal Graph"
+        ],
+        "summary": "Get Multipartite Graph",
+        "operationId": "get_multipartite_graph_api_v1_graphs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Get Multipartite Graph Api V1 Graphs Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/graphs/triclique": {
+      "post": {
+        "tags": [
+          "Multipartite & Causal Graph"
+        ],
+        "summary": "Run Triclique Inference",
+        "operationId": "run_triclique_inference_api_v1_graphs_triclique_post",
+        "parameters": [
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "maximal",
+              "title": "Mode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Run Triclique Inference Api V1 Graphs Triclique Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/endotypes": {
+      "get": {
+        "tags": [
+          "Disease Endotypes"
+        ],
+        "summary": "Get Endotypes",
+        "operationId": "get_endotypes_api_v1_endotypes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Get Endotypes Api V1 Endotypes Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hypotheses": {
+      "get": {
+        "tags": [
+          "Therapeutic Hypotheses"
+        ],
+        "summary": "List Hypotheses",
+        "operationId": "list_hypotheses_api_v1_hypotheses_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HypothesisRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Hypotheses Api V1 Hypotheses Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Therapeutic Hypotheses"
+        ],
+        "summary": "Create Hypothesis",
+        "operationId": "create_hypothesis_api_v1_hypotheses_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HypothesisCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HypothesisRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hypotheses/{hypothesis_id}/compile": {
+      "post": {
+        "tags": [
+          "Therapeutic Hypotheses"
+        ],
+        "summary": "Compile Hypothesis",
+        "operationId": "compile_hypothesis_api_v1_hypotheses__hypothesis_id__compile_post",
+        "parameters": [
+          {
+            "name": "hypothesis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Hypothesis Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Compile Hypothesis Api V1 Hypotheses  Hypothesis Id  Compile Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hypotheses/{hypothesis_id}/falsify": {
+      "post": {
+        "tags": [
+          "Therapeutic Hypotheses"
+        ],
+        "summary": "Falsify Hypothesis",
+        "operationId": "falsify_hypothesis_api_v1_hypotheses__hypothesis_id__falsify_post",
+        "parameters": [
+          {
+            "name": "hypothesis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Hypothesis Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Falsify Hypothesis Api V1 Hypotheses  Hypothesis Id  Falsify Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pharmacology/evaluate-smiles": {
+      "post": {
+        "tags": [
+          "Pharmacology & Safety"
+        ],
+        "summary": "Evaluate Smiles",
+        "operationId": "evaluate_smiles_api_v1_pharmacology_evaluate_smiles_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmilesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Evaluate Smiles Api V1 Pharmacology Evaluate Smiles Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pharmacology/dock": {
+      "post": {
+        "tags": [
+          "Pharmacology & Safety"
+        ],
+        "summary": "Run Docking",
+        "operationId": "run_docking_api_v1_pharmacology_dock_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DockingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Run Docking Api V1 Pharmacology Dock Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pharmacology/safety-gate": {
+      "post": {
+        "tags": [
+          "Pharmacology & Safety"
+        ],
+        "summary": "Evaluate Safety Gate",
+        "operationId": "evaluate_safety_gate_api_v1_pharmacology_safety_gate_post",
+        "parameters": [
+          {
+            "name": "herg",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "LOW",
+              "title": "Herg"
+            }
+          },
+          {
+            "name": "hepato",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "LOW",
+              "title": "Hepato"
+            }
+          },
+          {
+            "name": "genotox",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "LOW",
+              "title": "Genotox"
+            }
+          },
+          {
+            "name": "free_conc",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 100.0,
+              "title": "Free Conc"
+            }
+          },
+          {
+            "name": "required_ic50",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 50.0,
+              "title": "Required Ic50"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Evaluate Safety Gate Api V1 Pharmacology Safety Gate Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/candidates": {
+      "get": {
+        "tags": [
+          "Candidate Interventions"
+        ],
+        "summary": "List Candidates",
+        "operationId": "list_candidates_api_v1_candidates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CandidateRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Candidates Api V1 Candidates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/pareto-ranking": {
+      "get": {
+        "tags": [
+          "Pareto Portfolio Engine"
+        ],
+        "summary": "Get Pareto Ranking",
+        "operationId": "get_pareto_ranking_api_v1_portfolio_pareto_ranking_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Get Pareto Ranking Api V1 Portfolio Pareto Ranking Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/experiments": {
+      "get": {
+        "tags": [
+          "Inverse Experiment Designer"
+        ],
+        "summary": "List Experiment Plans",
+        "operationId": "list_experiment_plans_api_v1_experiments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExperimentPlanRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Experiment Plans Api V1 Experiments Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/experiments/recommend/{hypothesis_id}": {
+      "post": {
+        "tags": [
+          "Inverse Experiment Designer"
+        ],
+        "summary": "Recommend Experiment",
+        "operationId": "recommend_experiment_api_v1_experiments_recommend__hypothesis_id__post",
+        "parameters": [
+          {
+            "name": "hypothesis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Hypothesis Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Recommend Experiment Api V1 Experiments Recommend  Hypothesis Id  Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/decisions": {
+      "get": {
+        "tags": [
+          "Decisions & Governance"
+        ],
+        "summary": "List Decisions",
+        "operationId": "list_decisions_api_v1_decisions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DecisionRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Decisions Api V1 Decisions Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Decisions & Governance"
+        ],
+        "summary": "Record Decision",
+        "operationId": "record_decision_api_v1_decisions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/copilot/query": {
+      "post": {
+        "tags": [
+          "AI Copilot Workspace"
+        ],
+        "summary": "Query Copilot",
+        "operationId": "query_copilot_api_v1_copilot_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopilotQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopilotQueryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "tags": [
+          "Model Registry & Providers"
+        ],
+        "summary": "Get Model Providers",
+        "operationId": "get_model_providers_api_v1_models_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Model Providers Api V1 Models Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integrations": {
+      "get": {
+        "tags": [
+          "Integrations & Connectors"
+        ],
+        "summary": "List Integrations",
+        "operationId": "list_integrations_api_v1_integrations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response List Integrations Api V1 Integrations Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/audit": {
+      "get": {
+        "tags": [
+          "Audit Trail & Governance"
+        ],
+        "summary": "Get Audit Trail",
+        "operationId": "get_audit_trail_api_v1_audit_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Root  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlternativeMechanismRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "mechanism_name": {
+            "type": "string",
+            "title": "Mechanism Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "evidence_support": {
+            "type": "number",
+            "title": "Evidence Support"
+          },
+          "discriminating_assay": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discriminating Assay"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "mechanism_name",
+          "description",
+          "evidence_support"
+        ],
+        "title": "AlternativeMechanismRead"
+      },
+      "Body_login_api_v1_auth_login_post": {
+        "properties": {
+          "grant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "password"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_login_api_v1_auth_login_post"
+      },
+      "CandidateRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "smiles": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smiles"
+          },
+          "modality": {
+            "type": "string",
+            "title": "Modality"
+          },
+          "primary_target": {
+            "type": "string",
+            "title": "Primary Target"
+          },
+          "cpi_score": {
+            "type": "number",
+            "title": "Cpi Score"
+          },
+          "novelty_score": {
+            "type": "number",
+            "title": "Novelty Score"
+          },
+          "overall_status": {
+            "type": "string",
+            "title": "Overall Status"
+          },
+          "molecular_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Molecular Weight"
+          },
+          "clogp": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clogp"
+          },
+          "safety_gate_passed": {
+            "type": "boolean",
+            "title": "Safety Gate Passed"
+          },
+          "docking_status": {
+            "type": "string",
+            "title": "Docking Status"
+          },
+          "docking_score_kcal_mol": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docking Score Kcal Mol"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "program_id",
+          "name",
+          "modality",
+          "primary_target",
+          "cpi_score",
+          "novelty_score",
+          "overall_status",
+          "safety_gate_passed",
+          "docking_status"
+        ],
+        "title": "CandidateRead"
+      },
+      "CopilotQueryRequest": {
+        "properties": {
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          }
+        },
+        "type": "object",
+        "required": [
+          "program_id",
+          "query"
+        ],
+        "title": "CopilotQueryRequest"
+      },
+      "CopilotQueryResponse": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "citations": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Citations"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "uncertainties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Uncertainties"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer",
+          "citations",
+          "confidence",
+          "uncertainties"
+        ],
+        "title": "CopilotQueryResponse"
+      },
+      "DecisionCreate": {
+        "properties": {
+          "hypothesis_id": {
+            "type": "string",
+            "title": "Hypothesis Id"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/DecisionOutcome"
+          },
+          "rationale": {
+            "type": "string",
+            "title": "Rationale"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hypothesis_id",
+          "outcome",
+          "rationale"
+        ],
+        "title": "DecisionCreate"
+      },
+      "DecisionOutcome": {
+        "type": "string",
+        "enum": [
+          "ADVANCE",
+          "HOLD",
+          "REDESIGN",
+          "TERMINATE",
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "title": "DecisionOutcome"
+      },
+      "DecisionRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "hypothesis_id": {
+            "type": "string",
+            "title": "Hypothesis Id"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/DecisionOutcome"
+          },
+          "rationale": {
+            "type": "string",
+            "title": "Rationale"
+          },
+          "reviewer_id": {
+            "type": "string",
+            "title": "Reviewer Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "hypothesis_id",
+          "outcome",
+          "rationale",
+          "reviewer_id",
+          "created_at"
+        ],
+        "title": "DecisionRead"
+      },
+      "DigitalTwinSnapshotRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "snapshot_index": {
+            "type": "integer",
+            "title": "Snapshot Index"
+          },
+          "trigger_event": {
+            "type": "string",
+            "title": "Trigger Event"
+          },
+          "program_state": {
+            "type": "object",
+            "title": "Program State"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "program_id",
+          "snapshot_index",
+          "trigger_event",
+          "program_state",
+          "created_at"
+        ],
+        "title": "DigitalTwinSnapshotRead"
+      },
+      "DockingRequest": {
+        "properties": {
+          "smiles": {
+            "type": "string",
+            "title": "Smiles"
+          },
+          "target_pdb_id": {
+            "type": "string",
+            "title": "Target Pdb Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "smiles",
+          "target_pdb_id"
+        ],
+        "title": "DockingRequest"
+      },
+      "EvidenceMaturity": {
+        "type": "string",
+        "enum": [
+          "associative",
+          "structurally_inferred",
+          "mechanistically_supported",
+          "causally_corroborated",
+          "experimentally_validated",
+          "clinically_established"
+        ],
+        "title": "EvidenceMaturity"
+      },
+      "EvidenceRecordCreate": {
+        "properties": {
+          "source_name": {
+            "type": "string",
+            "title": "Source Name"
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id"
+          },
+          "evidence_type": {
+            "type": "string",
+            "title": "Evidence Type"
+          },
+          "evidence_maturity": {
+            "$ref": "#/components/schemas/EvidenceMaturity",
+            "default": "associative"
+          },
+          "normalized_payload": {
+            "type": "object",
+            "title": "Normalized Payload"
+          },
+          "quality_score": {
+            "type": "number",
+            "title": "Quality Score",
+            "default": 1.0
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_name",
+          "evidence_type",
+          "normalized_payload"
+        ],
+        "title": "EvidenceRecordCreate"
+      },
+      "EvidenceRecordRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id"
+          },
+          "evidence_type": {
+            "type": "string",
+            "title": "Evidence Type"
+          },
+          "evidence_maturity": {
+            "$ref": "#/components/schemas/EvidenceMaturity"
+          },
+          "checksum": {
+            "type": "string",
+            "title": "Checksum"
+          },
+          "quality_score": {
+            "type": "number",
+            "title": "Quality Score"
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic"
+          },
+          "retrieval_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieval Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "source_id",
+          "evidence_type",
+          "evidence_maturity",
+          "checksum",
+          "quality_score",
+          "is_synthetic",
+          "retrieval_timestamp"
+        ],
+        "title": "EvidenceRecordRead"
+      },
+      "ExperimentPlanRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "hypothesis_id": {
+            "type": "string",
+            "title": "Hypothesis Id"
+          },
+          "scientific_objective": {
+            "type": "string",
+            "title": "Scientific Objective"
+          },
+          "recommended_assay": {
+            "type": "string",
+            "title": "Recommended Assay"
+          },
+          "biological_model": {
+            "type": "string",
+            "title": "Biological Model"
+          },
+          "expected_voi": {
+            "type": "number",
+            "title": "Expected Voi"
+          },
+          "estimated_cost_usd": {
+            "type": "number",
+            "title": "Estimated Cost Usd"
+          },
+          "estimated_duration_days": {
+            "type": "integer",
+            "title": "Estimated Duration Days"
+          },
+          "advance_threshold": {
+            "type": "string",
+            "title": "Advance Threshold"
+          },
+          "terminate_threshold": {
+            "type": "string",
+            "title": "Terminate Threshold"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "hypothesis_id",
+          "scientific_objective",
+          "recommended_assay",
+          "biological_model",
+          "expected_voi",
+          "estimated_cost_usd",
+          "estimated_duration_days",
+          "advance_threshold",
+          "terminate_threshold",
+          "status",
+          "created_at"
+        ],
+        "title": "ExperimentPlanRead"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HypothesisCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "intervention_name": {
+            "type": "string",
+            "title": "Intervention Name"
+          },
+          "intended_target": {
+            "type": "string",
+            "title": "Intended Target"
+          },
+          "intended_action": {
+            "type": "string",
+            "title": "Intended Action"
+          },
+          "cellular_context": {
+            "type": "string",
+            "title": "Cellular Context"
+          },
+          "disease_endotype": {
+            "type": "string",
+            "title": "Disease Endotype"
+          },
+          "genomic_background": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Genomic Background"
+          },
+          "predictive_biomarkers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Predictive Biomarkers"
+          },
+          "dose_exposure_regime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dose Exposure Regime"
+          },
+          "schedule_duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schedule Duration"
+          },
+          "safety_constraints": {
+            "type": "object",
+            "title": "Safety Constraints"
+          },
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "intervention_name",
+          "intended_target",
+          "intended_action",
+          "cellular_context",
+          "disease_endotype",
+          "program_id"
+        ],
+        "title": "HypothesisCreate"
+      },
+      "HypothesisRead": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "intervention_name": {
+            "type": "string",
+            "title": "Intervention Name"
+          },
+          "intended_target": {
+            "type": "string",
+            "title": "Intended Target"
+          },
+          "intended_action": {
+            "type": "string",
+            "title": "Intended Action"
+          },
+          "cellular_context": {
+            "type": "string",
+            "title": "Cellular Context"
+          },
+          "disease_endotype": {
+            "type": "string",
+            "title": "Disease Endotype"
+          },
+          "genomic_background": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Genomic Background"
+          },
+          "predictive_biomarkers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Predictive Biomarkers"
+          },
+          "dose_exposure_regime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dose Exposure Regime"
+          },
+          "schedule_duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schedule Duration"
+          },
+          "safety_constraints": {
+            "type": "object",
+            "title": "Safety Constraints"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "program_id": {
+            "type": "string",
+            "title": "Program Id"
+          },
+          "maturity": {
+            "$ref": "#/components/schemas/EvidenceMaturity"
+          },
+          "support_score": {
+            "type": "number",
+            "title": "Support Score"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "proof_obligations": {
+            "items": {
+              "$ref": "#/components/schemas/ProofObligationRead"
+            },
+            "type": "array",
+            "title": "Proof Obligations"
+          },
+          "alternative_mechanisms": {
+            "items": {
+              "$ref": "#/components/schemas/AlternativeMechanismRead"
+            },
+            "type": "array",
+            "title": "Alternative Mechanisms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "intervention_name",
+          "intended_target",
+          "intended_action",
+          "cellular_context",
+          "disease_endotype",
+          "id",
+          "program_id",
+          "maturity",
+          "support_score",
+          "status",
+          "version",
+          "created_at"
+        ],
+        "title": "HypothesisRead"
+      },
+      "ProgramCreate": {
+        "properties": {
+          "disease": {
+            "type": "string",
+            "title": "Disease"
+          },
+          "indication": {
+            "type": "string",
+            "title": "Indication"
+          },
+          "patient_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patient Context"
+          },
+          "disease_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disease Stage"
+          },
+          "treatment_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Treatment Context"
+          },
+          "program_objective": {
+            "type": "string",
+            "title": "Program Objective"
+          },
+          "constraints": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraints"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "disease",
+          "indication",
+          "program_objective",
+          "project_id"
+        ],
+        "title": "ProgramCreate"
+      },
+      "ProgramRead": {
+        "properties": {
+          "disease": {
+            "type": "string",
+            "title": "Disease"
+          },
+          "indication": {
+            "type": "string",
+            "title": "Indication"
+          },
+          "patient_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patient Context"
+          },
+          "disease_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disease Stage"
+          },
+          "treatment_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Treatment Context"
+          },
+          "program_objective": {
+            "type": "string",
+            "title": "Program Objective"
+          },
+          "constraints": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraints"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "disease",
+          "indication",
+          "program_objective",
+          "id",
+          "project_id",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ProgramRead"
+      },
+      "ProjectCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "disease_area": {
+            "type": "string",
+            "title": "Disease Area"
+          },
+          "organization_id": {
+            "type": "string",
+            "title": "Organization Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "disease_area",
+          "organization_id"
+        ],
+        "title": "ProjectCreate"
+      },
+      "ProjectRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "disease_area": {
+            "type": "string",
+            "title": "Disease Area"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "string",
+            "title": "Organization Id"
+          },
+          "created_by": {
+            "type": "string",
+            "title": "Created By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "disease_area",
+          "id",
+          "organization_id",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ProjectRead"
+      },
+      "ProofObligationRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "proposition": {
+            "type": "string",
+            "title": "Proposition"
+          },
+          "required_evidence_type": {
+            "type": "string",
+            "title": "Required Evidence Type"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "threshold_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold Value"
+          },
+          "evidence_references": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence References"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "proposition",
+          "required_evidence_type",
+          "state",
+          "evidence_references"
+        ],
+        "title": "ProofObligationRead"
+      },
+      "SmilesRequest": {
+        "properties": {
+          "smiles": {
+            "type": "string",
+            "title": "Smiles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "smiles"
+        ],
+        "title": "SmilesRequest"
+      },
+      "Token": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserRead"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "Token"
+      },
+      "UserCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "display_name",
+          "password"
+        ],
+        "title": "UserCreate"
+      },
+      "UserRead": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_login_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "display_name",
+          "id",
+          "status",
+          "created_at"
+        ],
+        "title": "UserRead"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "/api/v1/auth/login"
+          }
+        }
+      }
+    }
+  }
+}

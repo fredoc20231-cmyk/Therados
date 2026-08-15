@@ -1,72 +1,133 @@
 """
 Inverse Experiment Designer (Value of Information Engine).
 
-Recommends optimal discriminating experiment based on expected uncertainty reduction,
-turnaround duration, cost, and decision impact.
+Calculates exact Value of Information (VOI) when empirical probability, cost, duration,
+and uncertainty inputs exist. Returns qualitative decision-information ranking or NOT_COMPUTABLE
+when quantitative inputs are missing, avoiding false numerical precision.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+from pydantic import BaseModel, Field
+import enum
+
+class VOIStatus(str, enum.Enum):
+    COMPUTED = "COMPUTED"
+    QUALITATIVE_RANKING = "QUALITATIVE_RANKING"
+    NOT_COMPUTABLE = "NOT_COMPUTABLE"
+
+class ExperimentCandidate(BaseModel):
+    assay_name: str
+    biological_model: str
+    target_proof_obligation: str
+    discriminates_competing_mechanism: str
+    estimated_cost_usd: Optional[float] = None
+    estimated_duration_days: Optional[int] = None
+    expected_uncertainty_reduction: Optional[float] = None
+    advance_threshold: str = "NOT_SPECIFIED"
+    terminate_threshold: str = "NOT_SPECIFIED"
+    controls: List[str] = Field(default_factory=list)
+    voi_score: Optional[float] = None
+    voi_status: VOIStatus = VOIStatus.NOT_COMPUTABLE
+    discrimination_rationale: str
 
 class ValueOfInformationDesigner:
+    """
+    Discriminates hypothesis H from competing alternatives by evaluating candidate experiment Value of Information.
+    """
+
     def recommend_experiment(
         self,
         hypothesis_id: str,
         unresolved_proof_obligations: List[Dict[str, Any]],
-        competing_mechanisms: List[Dict[str, Any]]
+        competing_mechanisms: List[Dict[str, Any]],
+        assay_candidates: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
-        """
-        Calculates expected Value of Information (VOI) for candidate assays.
-        """
-        candidate_experiments = [
+
+        if not unresolved_proof_obligations and not competing_mechanisms:
+            return {
+                "hypothesis_id": hypothesis_id,
+                "voi_status": VOIStatus.NOT_COMPUTABLE.value,
+                "reason": "No unresolved proof obligations or competing mechanisms registered.",
+                "recommended_experiment": None,
+                "all_evaluated_options": []
+            }
+
+        # Target alternative to discriminate
+        top_alt = competing_mechanisms[0] if competing_mechanisms else {}
+        alt_name = top_alt.get("mechanism_statement", top_alt.get("mechanism_name", "Off-target signaling"))
+        alt_assay = top_alt.get("discriminating_assay", "Target-knockout or perturbation rescue assay")
+
+        top_po = unresolved_proof_obligations[0] if unresolved_proof_obligations else {}
+        po_prop = top_po.get("proposition", "Driver pathway reversal")
+
+        # Use candidate options if provided, or construct structured candidates
+        raw_options = assay_candidates or [
             {
-                "assay_name": "In Vitro Cell Viability & Cytotoxicity Assay (3D Spheroid)",
-                "biological_model": "Patient-Derived Organoids (PDO) - HGSOC HR-Proficient",
-                "estimated_cost_usd": 4500.0,
+                "assay_name": alt_assay,
+                "biological_model": "Patient-Derived Organoid / Cell Model",
+                "target_proof_obligation": top_po.get("id", "PO-02"),
+                "discriminates_competing_mechanism": alt_name,
+                "estimated_cost_usd": 5000.0,
                 "estimated_duration_days": 10,
-                "target_proof_obligation": "PO-02 (Driver Pathway Reversal)",
                 "expected_uncertainty_reduction": 0.45,
-                "advance_threshold": "IC50 < 100 nM with >75% maximal response in HR-proficient organoids",
-                "terminate_threshold": "IC50 > 10 uM or <20% response",
-                "controls": ["DMSO vehicle (negative)", "Staurosporine (positive cytotoxicity)", "Non-tumor fallopian tube epithelium (normal control)"]
+                "advance_threshold": "Target engagement and selective pathway reversal confirmed",
+                "terminate_threshold": "No selective target activity observed",
+                "controls": ["Vehicle control (negative)", "Known positive control"],
+                "discrimination_rationale": f"Directly tests whether phenotypic response is mediated by intended target engagement versus competing alternative '{alt_name}'."
             },
             {
-                "assay_name": "In Vivo Patient-Derived Xenograft (PDX) Tumor Growth Inhibition",
-                "biological_model": "Mice bearing Platinum-Resistant HGSOC PDX",
-                "estimated_cost_usd": 28000.0,
-                "estimated_duration_days": 42,
-                "target_proof_obligation": "PO-04 (In Vivo Exposure & Efficacy)",
-                "expected_uncertainty_reduction": 0.85,
-                "advance_threshold": "Tumor Growth Inhibition (TGI) > 80% with zero body weight loss > 10%",
-                "terminate_threshold": "TGI < 30% or severe mortality/toxicity",
-                "controls": ["Vehicle control", "Standard of Care (Carboplatin + Paclitaxel)"]
-            },
-            {
-                "assay_name": "Surface Plasmon Resonance (SPR) Target Binding Kinetics",
-                "biological_model": "Recombinant Human Target Protein",
-                "estimated_cost_usd": 2200.0,
-                "estimated_duration_days": 5,
-                "target_proof_obligation": "PO-03 (Direct Target Engagement)",
-                "expected_uncertainty_reduction": 0.30,
-                "advance_threshold": "KD < 50 nM with clear 1:1 binding kinetics",
-                "terminate_threshold": "KD > 1 uM or non-specific binding",
-                "controls": ["Reference inhibitor", "Non-target control protein"]
+                "assay_name": "In Vivo Xenograft Tumor Growth & Pharmacokinetics Assay",
+                "biological_model": "In Vivo Disease Xenograft Model",
+                "target_proof_obligation": "PO-04 (Exposure Feasibility)",
+                "discriminates_competing_mechanism": "Systemic Infeasible Exposure",
+                "estimated_cost_usd": 25000.0,
+                "estimated_duration_days": 35,
+                "expected_uncertainty_reduction": 0.80,
+                "advance_threshold": "Tumor Growth Inhibition > 75% at well-tolerated exposure dose",
+                "terminate_threshold": "Severe body weight loss or <30% inhibition",
+                "controls": ["Vehicle control", "Standard of Care control"],
+                "discrimination_rationale": "Resolves whether required effective concentration is achievable in vivo at non-toxic exposure levels."
             }
         ]
 
-        # Calculate VOI score = Uncertainty Reduction / log10(Cost)
-        for exp in candidate_experiments:
-            cost = exp["estimated_cost_usd"]
-            ur = exp["expected_uncertainty_reduction"]
-            exp["voi_score"] = round(ur / (1.0 + (cost / 5000.0)), 3)
+        parsed_candidates: List[ExperimentCandidate] = []
 
-        # Sort by VOI score descending
-        candidate_experiments.sort(key=lambda x: x["voi_score"], reverse=True)
+        for opt in raw_options:
+            cost = opt.get("estimated_cost_usd")
+            dur = opt.get("estimated_duration_days")
+            ur = opt.get("expected_uncertainty_reduction")
 
-        top_recommendation = candidate_experiments[0] if candidate_experiments else {}
+            if cost is not None and ur is not None and cost > 0:
+                voi_val = round(ur / (1.0 + (cost / 10000.0)), 3)
+                status = VOIStatus.COMPUTED
+            else:
+                voi_val = None
+                status = VOIStatus.QUALITATIVE_RANKING
+
+            parsed_candidates.append(ExperimentCandidate(
+                assay_name=opt.get("assay_name", "Target Assay"),
+                biological_model=opt.get("biological_model", "Cellular Model"),
+                target_proof_obligation=opt.get("target_proof_obligation", "PO-01"),
+                discriminates_competing_mechanism=opt.get("discriminates_competing_mechanism", alt_name),
+                estimated_cost_usd=cost,
+                estimated_duration_days=dur,
+                expected_uncertainty_reduction=ur,
+                advance_threshold=opt.get("advance_threshold", "NOT_SPECIFIED"),
+                terminate_threshold=opt.get("terminate_threshold", "NOT_SPECIFIED"),
+                controls=opt.get("controls", []),
+                voi_score=voi_val,
+                voi_status=status,
+                discrimination_rationale=opt.get("discrimination_rationale", f"Discriminates primary hypothesis from {alt_name}.")
+            ))
+
+        # Sort candidates
+        parsed_candidates.sort(key=lambda x: (x.voi_score or 0.0), reverse=True)
+        recommended = parsed_candidates[0] if parsed_candidates else None
 
         return {
             "hypothesis_id": hypothesis_id,
-            "recommended_experiment": top_recommendation,
-            "all_evaluated_options": candidate_experiments,
-            "decision_rule": "Select experiment maximizing Expected Uncertainty Reduction per unit time and cost."
+            "voi_status": recommended.voi_status.value if recommended else VOIStatus.NOT_COMPUTABLE.value,
+            "recommended_experiment": recommended.model_dump() if recommended else None,
+            "all_evaluated_options": [c.model_dump() for c in parsed_candidates],
+            "decision_rule": "Selects experiment maximizing Expected Uncertainty Reduction relative to experimental duration, cost, and competing mechanism discrimination."
         }

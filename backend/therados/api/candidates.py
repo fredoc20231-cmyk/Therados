@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List
@@ -10,7 +10,7 @@ from therados.schemas.domain_schemas import CandidateRead
 router = APIRouter(prefix="/candidates", tags=["Candidate Interventions"])
 
 @router.get("", response_model=List[CandidateRead])
-async def list_candidates(db: AsyncSession = Depends(get_db)):
+async def list_candidates(db: AsyncSession = Depends(get_db)) -> List[CandidateRead]:
     res = await db.execute(select(CandidateIntervention))
     candidates = res.scalars().all()
 
