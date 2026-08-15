@@ -1,0 +1,18 @@
+---
+description: Engineering standards and monorepo guidelines for TheraDOS
+globs: **/*
+---
+
+# TheraDOS Engineering Standards
+
+1. **Architecture**:
+   - Backend: Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2.x async, Alembic, PostgreSQL (pgvector), Neo4j, Redis, Temporal.
+   - Frontend: Next.js App Router, React 18+, TypeScript strict, Tailwind CSS, shadcn/ui, Cytoscape.js, Plotly.js, 3Dmol.js.
+2. **Modular Monorepo Structure**:
+   - `apps/web`: Frontend application
+   - `backend`: FastAPI API server, DB models, background workers
+   - `scientific`: Core scientific engines (triclique, CPI, compiler, falsification, portfolio, inverse experiment designer)
+   - `integrations`: External provider adapters (Open Targets, ChEMBL, UniProt, PubChem, RDKit, Vina, LLMs)
+   - `docs`: Documentation & status tracking
+3. **No Dead UI**: Every button, tab, and form must either execute a real action or state provider requirements cleanly.
+4. **Error Handling**: Graceful degradation when external providers (e.g. docking executable, LLM API keys) are not configured.

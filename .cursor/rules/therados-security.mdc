@@ -1,0 +1,12 @@
+---
+description: Security and authorization rules for TheraDOS
+globs: **/*
+---
+
+# TheraDOS Security Guidelines
+
+1. **No API Keys or Secrets in Source Code**: Use environment variables (.env).
+2. **RBAC Control**: Enforce roles (`viewer`, `scientist`, `reviewer`, `admin`) on backend routes.
+3. **Audit Trails**: Log critical operations (evidence uploads, hypothesis compilation, decisions, model runs) with `AuditEvent`.
+4. **Input Sanitization**: Use Pydantic models for request payload validation and Zod for client forms. File uploads must check MIME types and SHA-256 checksums.
+5. **Data Isolation**: Multi-tenant organization and project isolation in database queries.

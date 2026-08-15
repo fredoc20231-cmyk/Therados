@@ -1,0 +1,13 @@
+---
+description: Scientific rules and principles for TheraDOS development
+globs: **/*
+---
+
+# TheraDOS Scientific Rules
+
+1. **Never fabricate scientific data**: No hardcoded fake binding affinities, docking scores, p-values, or gene expression. Use `Not available`, `Not evaluated`, or `Provider not configured`.
+2. **Provenance is mandatory**: Every evidence claim must trace to an `EvidenceRecord` with source, checksum, timestamp, and lineage.
+3. **Hard Feasibility Gates**: Exposure, safety, direction of effect, and target expression are hard gates. They CANNOT be averaged into a composite score.
+4. **Distinguish Predictions from Facts**: Categorize evidence cleanly into Associative, Structurally Inferred, Mechanistically Supported, Causally Corroborated, Experimentally Validated, or Clinically Established.
+5. **Support Score vs Probability**: Never label heuristic evidence scores as "Probability" unless calibrated.
+6. **Synthetic Data Isolation**: Tutorial/demo datasets must be explicitly flagged with `is_synthetic: true` and labeled "SYNTHETIC TUTORIAL DATA — NOT SCIENTIFIC EVIDENCE".
