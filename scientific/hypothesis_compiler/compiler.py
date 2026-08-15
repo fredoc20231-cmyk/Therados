@@ -113,7 +113,7 @@ class HypothesisCompiler:
             required_evidence_type="Omics / Target Expression",
             state=ObligationState.SUPPORTED if po1_supported else ObligationState.UNRESOLVED,
             threshold_value="Context expression established" if po1_supported else "NOT_SPECIFIED",
-            evidence_references=[e.get("id") for e in evidence if e.get("predicate") == "expressed_in"],
+            evidence_references=[str(e.get("id")) for e in evidence if e.get("predicate") == "expressed_in" and e.get("id") is not None],
             source_type=SourceType.RULE_GENERATED,
             rule_provenance="Rule-01: Target Context Expression Requirement"
         ))
@@ -129,7 +129,7 @@ class HypothesisCompiler:
             required_evidence_type="Causal / Perturbation Assay",
             state=ObligationState.SUPPORTED if po2_supported else ObligationState.UNRESOLVED,
             threshold_value="Directional benefit established" if po2_supported else "NOT_SPECIFIED",
-            evidence_references=[e.get("id") for e in evidence if e.get("predicate") in ["inhibits", "activates", "degrades"]],
+            evidence_references=[str(e.get("id")) for e in evidence if e.get("predicate") in ["inhibits", "activates", "degrades"] and e.get("id") is not None],
             source_type=SourceType.RULE_GENERATED,
             rule_provenance="Rule-02: Direction of Effect Requirement"
         ))
@@ -145,7 +145,7 @@ class HypothesisCompiler:
             required_evidence_type="Biophysical / Binding Assay",
             state=ObligationState.SUPPORTED if po3_supported else ObligationState.UNRESOLVED,
             threshold_value="Target engagement established" if po3_supported else "NOT_SPECIFIED",
-            evidence_references=[e.get("id") for e in evidence if e.get("predicate") == "binds"],
+            evidence_references=[str(e.get("id")) for e in evidence if e.get("predicate") == "binds" and e.get("id") is not None],
             source_type=SourceType.RULE_GENERATED,
             rule_provenance="Rule-03: Biophysical Target Engagement Requirement"
         ))

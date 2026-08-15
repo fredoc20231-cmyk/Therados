@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List, Dict, Any, cast
+from typing import List, Dict, Any
 
 from therados.db.session import get_db
 from therados.models.domain_models import ExperimentPlan, ProofObligation, AlternativeMechanism
@@ -25,4 +25,4 @@ async def recommend_experiment(hypothesis_id: str, db: AsyncSession = Depends(ge
     alts_res = await db.execute(select(AlternativeMechanism).where(AlternativeMechanism.hypothesis_id == hypothesis_id))
     alts = [{"mechanism_name": a.mechanism_name, "evidence_support": a.evidence_support} for a in alts_res.scalars().all()]
 
-    return cast(Dict[str, Any], voi_designer.recommend_experiment(hypothesis_id, pos, alts))
+    return voi_designer.recommend_experiment(hypothesis_id, pos, alts)

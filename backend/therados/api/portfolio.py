@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import Dict, Any, cast
+from typing import Dict, Any
 
 from therados.db.session import get_db
 from therados.models.domain_models import CandidateIntervention, SafetyAssessment
@@ -30,4 +30,4 @@ async def get_pareto_ranking(db: AsyncSession = Depends(get_db)) -> Dict[str, An
             "safety_gate_passed": safety.safety_gate_passed if safety else True
         })
 
-    return cast(Dict[str, Any], pareto_engine.rank_candidates(cand_data))
+    return pareto_engine.rank_candidates(cand_data)

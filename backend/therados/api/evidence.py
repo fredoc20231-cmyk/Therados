@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List, Dict, Any, cast
+from typing import List, Dict, Any
 import hashlib
 
 from therados.db.session import get_db
@@ -78,4 +78,4 @@ async def evaluate_independence(db: AsyncSession = Depends(get_db)) -> Dict[str,
         }
         for c in claims
     ]
-    return cast(Dict[str, Any], independence_engine.compute_independent_support(claims_data))
+    return independence_engine.compute_independent_support(claims_data)

@@ -35,12 +35,12 @@ class RDKitEngine:
                 if mol is None:
                     return {"valid_smiles": False, "error": "Invalid SMILES structure"}
 
-                mw = float(Descriptors.MolWt(mol))
-                clogp = float(Descriptors.MolLogP(mol))
-                hbd = int(Lipinski.NumHDonors(mol))
-                hba = int(Lipinski.NumHAcceptors(mol))
-                tpsa = float(Descriptors.TPSA(mol))
-                rotb = int(Lipinski.NumRotatableBonds(mol))
+                mw = float(Descriptors.MolWt(mol))  # type: ignore[attr-defined]
+                clogp = float(Descriptors.MolLogP(mol))  # type: ignore[attr-defined]
+                hbd = int(Lipinski.NumHDonors(mol))  # type: ignore[attr-defined]
+                hba = int(Lipinski.NumHAcceptors(mol))  # type: ignore[attr-defined]
+                tpsa = float(Descriptors.TPSA(mol))  # type: ignore[attr-defined]
+                rotb = int(Lipinski.NumRotatableBonds(mol))  # type: ignore[attr-defined]
 
                 # Lipinski Rule of 5 violations
                 ro5_violations = 0

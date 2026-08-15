@@ -261,7 +261,7 @@ class MaximalTricliqueAugmentationEngine:
                 "explanation": f"Missing Drug-Disease edge ({d} -> {e}) supported by {support_count} maximal triclique(s) [{', '.join(tcs[:3])}]."
             })
 
-        format_cands.sort(key=lambda x: x["support_score"], reverse=True)
+        format_cands.sort(key=lambda x: float(str(x.get("support_score", 0.0))), reverse=True)
 
         return {
             "maximal_tricliques_count": len(maximal_tcs),

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import Dict, Any, cast
+from typing import Dict, Any
 
 from therados.db.session import get_db
 from therados.models.domain_models import EvidenceClaim, BiologicalEntity
@@ -46,4 +46,4 @@ async def run_triclique_inference(mode: str = "maximal") -> Dict[str, Any]:
         return {"mode": "baseline", "candidates": candidates}
 
     res = maximal_engine.predict_candidate_edges(drugs, proteins, diseases, dp_edges, pe_edges, de_edges)
-    return cast(Dict[str, Any], res)
+    return res

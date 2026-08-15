@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import List, Dict, Any, cast
+from typing import List, Dict, Any
 
 from therados.db.session import get_db
 from therados.models.domain_models import TherapeuticHypothesis, AlternativeMechanism
@@ -60,7 +60,7 @@ async def compile_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_
 
     hypo.status = "compiled"
     await db.commit()
-    return cast(Dict[str, Any], dossier.model_dump())
+    return dossier.model_dump()
 
 @router.post("/{hypothesis_id}/falsify")
 async def falsify_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
@@ -86,4 +86,4 @@ async def falsify_hypothesis(hypothesis_id: str, db: AsyncSession = Depends(get_
         hypothesis_title=hypo.title,
         alternative_mechanisms=alts_data
     )
-    return cast(Dict[str, Any], dossier.model_dump())
+    return dossier.model_dump()
