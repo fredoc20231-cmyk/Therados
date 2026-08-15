@@ -1,0 +1,46 @@
+# TheraDOS Program Configuration: THERADOS-POC-001
+program_id: "THERADOS-POC-001"
+program_name: "Platinum-Resistant High-Grade Serous Ovarian Cancer Therapeutic Discovery Program"
+project_mode: "REAL" # REAL, TUTORIAL, TEST (Synthetic data prohibited in REAL mode)
+
+disease:
+  name: "High-Grade Serous Ovarian Carcinoma"
+  doid: "DOID:4030"
+  mesh_id: "D010190"
+
+therapeutic_setting:
+  indication: "Platinum-Resistant Recurrent HGSOC"
+  prior_therapy: "Systemic Platinum-Based Chemotherapy (Carboplatin + Paclitaxel)"
+  resistance_profile: "Disease Progression within 6 months of platinum completion"
+
+species: "human"
+
+objectives:
+  - "target_discovery"
+  - "drug_repositioning"
+  - "synthetic_lethality_discovery"
+  - "combination_hypothesis_generation"
+
+required_contexts:
+  primary_tumor: "HGSOC High-Grade Epithelial Tumor Cell"
+  stromal_context: "Cancer-Associated Fibroblasts & ECM"
+  immune_context: "Tumor-Infiltrating Lymphocytes & TAMs"
+  normal_safety_tissues:
+    - "Fallopian Tube Epithelium"
+    - "Normal Cardiac Ventricular Myocytes"
+    - "Human Primary Hepatocytes"
+    - "Hematopoietic Stem Cells"
+
+candidate_generation_ensemble:
+  generators:
+    - "MAXIMAL_TRICLIQUE"
+    - "NEIGHBORHOOD_COMPLETION"
+    - "OPEN_TARGETS_DISEASE_EVIDENCE"
+    - "CHEMBL_BIOACTIVITY"
+    - "HUMAN_CAUSAL_GENETICS"
+    - "ENDOTYPE_DRIVER_DEPENDENCY"
+
+quality_thresholds:
+  min_evidence_quality: 0.70
+  require_direction_concordance: true
+  allow_synthetic_data: false

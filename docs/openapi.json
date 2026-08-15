@@ -1232,6 +1232,50 @@
         }
       }
     },
+    "/api/v1/discovery/config": {
+      "get": {
+        "tags": [
+          "Discovery Workspace POC"
+        ],
+        "summary": "Get Hgsoc Program Config",
+        "operationId": "get_hgsoc_program_config_api_v1_discovery_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Get Hgsoc Program Config Api V1 Discovery Config Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/run-hgsoc-poc": {
+      "post": {
+        "tags": [
+          "Discovery Workspace POC"
+        ],
+        "summary": "Execute Hgsoc Discovery Run",
+        "operationId": "execute_hgsoc_discovery_run_api_v1_discovery_run_hgsoc_poc_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Execute Hgsoc Discovery Run Api V1 Discovery Run Hgsoc Poc Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Root",

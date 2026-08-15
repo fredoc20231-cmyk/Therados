@@ -150,6 +150,44 @@ export interface ExperimentRecommendationResponse {
   all_evaluated_options: any[];
 }
 
+export interface HGSOCDiscoveryRunResponse {
+  program_id: string;
+  program_name: string;
+  project_mode: string;
+  locked_analysis_run: {
+    run_id: string;
+    program_id: string;
+    git_sha: string;
+    created_at: string;
+    config_checksum: string;
+    data_snapshot_manifest_id: string;
+    is_locked: boolean;
+    results_summary: Record<string, any>;
+  };
+  data_snapshot_manifest: {
+    manifest_id: string;
+    records: any[];
+    total_records_count: number;
+    provenance_hash: string;
+  };
+  temporal_holdout_manifest: {
+    benchmark_id: string;
+    cutoff_date: string;
+    pre_cutoff_evidence_count: number;
+    post_cutoff_hidden_count: number;
+    recovered_targets: string[];
+    holdout_recovery_hit_rate: number;
+    provenance_notes?: string;
+  };
+  endotype_clustering: any;
+  resistance_profile: any;
+  candidate_ensemble: any[];
+  pareto_portfolio: ParetoPortfolioResponse;
+  compiled_hypothesis_dossier: CompiledDossier;
+  falsification_dossier: FalsificationDossier;
+  inverse_experiment_recommendation: ExperimentRecommendationResponse;
+}
+
 export const fetchPrograms = async (): Promise<Program[]> => {
   const res = await apiClient.get<Program[]>('/programs');
   return res.data;
@@ -207,5 +245,15 @@ export const fetchModelProviders = async (): Promise<any[]> => {
 
 export const fetchIntegrations = async (): Promise<any[]> => {
   const res = await apiClient.get<any[]>('/integrations');
+  return res.data;
+};
+
+export const fetchHGSOCConfig = async (): Promise<any> => {
+  const res = await apiClient.get('/discovery/config');
+  return res.data;
+};
+
+export const runHGSOCDiscovery = async (): Promise<HGSOCDiscoveryRunResponse> => {
+  const res = await apiClient.post<HGSOCDiscoveryRunResponse>('/discovery/run-hgsoc-poc');
   return res.data;
 };

@@ -21,6 +21,7 @@ from therados.api.copilot import router as copilot_router
 from therados.api.models import router as models_router
 from therados.api.integrations import router as integrations_router
 from therados.api.audit import router as audit_router
+from therados.api.discovery import router as discovery_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -61,6 +62,7 @@ app.include_router(copilot_router, prefix=v1_prefix)
 app.include_router(models_router, prefix=v1_prefix)
 app.include_router(integrations_router, prefix=v1_prefix)
 app.include_router(audit_router, prefix=v1_prefix)
+app.include_router(discovery_router, prefix=v1_prefix)
 
 @app.get("/")
 async def root() -> Dict[str, str]:
