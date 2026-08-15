@@ -56,6 +56,9 @@ packages = [
 target-version = "py312"
 line-length = 100
 
+[tool.ruff.lint]
+ignore = ["UP006", "UP035"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
