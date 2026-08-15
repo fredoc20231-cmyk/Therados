@@ -38,7 +38,7 @@ run_manager = AnalysisRunManager()
 holdout_benchmark = TemporalHoldoutBenchmark()
 
 @router.get("/config")
-async def get_hgsoc_program_config() -> Dict[str, Any]:
+def get_hgsoc_program_config() -> Dict[str, Any]:
     cfg_path = os.path.join(os.getcwd(), "..", "configs", "programs", "hgsoc_platinum_resistant.yaml")
     if not os.path.exists(cfg_path):
         cfg_path = os.path.join(os.getcwd(), "configs", "programs", "hgsoc_platinum_resistant.yaml")
