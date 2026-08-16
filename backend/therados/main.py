@@ -26,13 +26,14 @@ from therados.api.audit import router as audit_router
 from therados.api.discovery import router as discovery_router
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("therados.main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     try:
         await init_db()
     except Exception as e:
-        logging.warning(f"Database initialization warning: {e}")
+        logger.warning(f"Database initialization warning: {e}")
     yield
 
 app = FastAPI(
