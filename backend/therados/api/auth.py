@@ -13,7 +13,7 @@ from therados.models.domain_models import User
 from therados.schemas.domain_schemas import Token, UserRead, UserCreate
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 def create_access_token(data: Dict[str, Any]) -> str:

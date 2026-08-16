@@ -12,7 +12,7 @@ from therados.models.domain_models import (
     DigitalTwinSnapshot, ModelProvider
 )
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 async def seed_tutorial_data() -> None:
     async with engine.begin() as conn:

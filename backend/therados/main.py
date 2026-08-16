@@ -1,9 +1,11 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict
+from typing import Dict, AsyncGenerator
 import logging
 
 from therados.config.settings import settings
+from therados.db.session import init_db
 from therados.api.health import router as health_router
 from therados.api.auth import router as auth_router
 from therados.api.projects import router as projects_router
@@ -25,12 +27,21 @@ from therados.api.discovery import router as discovery_router
 
 logging.basicConfig(level=logging.INFO)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    try:
+        await init_db()
+    except Exception as e:
+        logging.warning(f"Database initialization warning: {e}")
+    yield
+
 app = FastAPI(
     title="TheraDOS — Therapeutic Domain Operating System",
     description="Provenance-aware therapeutic intelligence operating system converting heterogeneous evidence into falsifiable, safety-constrained hypotheses.",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 app.add_middleware(

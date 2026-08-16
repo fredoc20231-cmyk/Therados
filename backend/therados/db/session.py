@@ -1,15 +1,17 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Dict, Any
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from therados.config.settings import settings
 
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=False,
-    future=True,
-    pool_size=10,
-    max_overflow=20
-)
+class Base(DeclarativeBase):
+    pass
+
+engine_kwargs: Dict[str, Any] = {"echo": False, "future": True}
+if "sqlite" not in settings.DATABASE_URL:
+    engine_kwargs["pool_size"] = 10
+    engine_kwargs["max_overflow"] = 20
+
+engine = create_async_engine(settings.DATABASE_URL, **engine_kwargs)
 
 AsyncSessionLocal = async_sessionmaker(
     engine,
@@ -19,8 +21,9 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False
 )
 
-class Base(DeclarativeBase):
-    pass
+async def init_db() -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:

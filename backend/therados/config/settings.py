@@ -8,10 +8,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
 
     # CORS
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3010,http://127.0.0.1:3010,http://localhost:3020,http://127.0.0.1:3020,http://localhost:3030,http://127.0.0.1:3030"
 
     # Database URLs
-    DATABASE_URL: str = "postgresql+asyncpg://therados:therados_dev_password@localhost:5432/therados_db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./therados.db"
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "therados_dev_password"
